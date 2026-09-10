@@ -1,1 +1,212 @@
-/* You can add global styles to this file, and also import other style files */
+@mixin dark-tokens {
+  --bg: #171912;
+  --surface: #1e211a;
+  --ink: #e9ece4;
+  --ink-soft: #a8ae9f;
+  --line: rgba(233, 236, 228, 0.14);
+  --accent: #9fc1a0;
+  --accent-ink: #bfe0c0;
+  color-scheme: dark;
+}
+
+:root {
+  --bg: #f2f4f0;
+  --surface: #ffffff;
+  --ink: #23261f;
+  --ink-soft: #5b6156;
+  --line: rgba(35, 38, 31, 0.14);
+  --accent: #7e9a80;
+  --accent-ink: #3e5a41;
+  color-scheme: light;
+
+  --font-body: 'Geist', ui-sans-serif, system-ui, sans-serif;
+  --font-mono: 'Geist Mono', ui-monospace, 'SF Mono', monospace;
+
+  --shell-max: 1040px;
+  --shell-pad: 32px;
+  --header-h: 77px;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    @include dark-tokens;
+  }
+}
+
+:root[data-theme='dark'] {
+  @include dark-tokens;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+  }
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: 14px;
+  font-weight: 400;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+// Sticky header would otherwise cover an anchored section's heading.
+:target {
+  scroll-margin-top: var(--header-h);
+}
+
+a:focus-visible,
+button:focus-visible {
+  outline: 2px solid var(--accent-ink);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
+img,
+svg {
+  max-width: 100%;
+  display: block;
+}
+
+.wrap {
+  max-width: var(--shell-max);
+  margin-inline: auto;
+  padding-inline: var(--shell-pad);
+}
+
+.skip-link {
+  position: absolute;
+  left: -9999px;
+  top: 0;
+  z-index: 10;
+  padding: 10px 16px;
+  background: var(--surface);
+  color: var(--ink);
+  font-family: var(--font-mono);
+  font-size: 13px;
+  text-decoration: none;
+
+  &:focus-visible {
+    left: 12px;
+    top: 12px;
+  }
+}
+
+.prose p {
+  max-width: 64ch;
+  margin: 0 0 14px;
+  font-size: 16px;
+  line-height: 1.72;
+  color: var(--ink-soft);
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+
+.prose strong,
+.edu strong {
+  color: var(--ink);
+  font-weight: 500;
+}
+
+.edu {
+  margin: 0;
+  font-size: 15px;
+  line-height: 1.7;
+  color: var(--ink-soft);
+}
+
+.eyebrow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 400;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+
+  .dot {
+    flex: none;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--accent);
+  }
+}
+
+.section-head {
+  display: flex;
+  align-items: baseline;
+  gap: 16px;
+  margin-bottom: 28px;
+
+  .section-id {
+    font-family: var(--font-mono);
+    font-size: 13px;
+    color: var(--accent-ink);
+  }
+
+  h2 {
+    margin: 0;
+    font-size: 1.4rem;
+    font-weight: 500;
+    letter-spacing: -0.015em;
+  }
+
+  .rule {
+    flex: 1;
+    height: 1px;
+    background: var(--line);
+  }
+}
+
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
+.tag {
+  padding: 3px 9px;
+  border-radius: 3px;
+  background: color-mix(in srgb, var(--accent) 18%, transparent);
+  color: var(--accent-ink);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.04em;
+}
+
+@media (max-width: 720px) {
+  :root {
+    --shell-pad: 20px;
+  }
+}
