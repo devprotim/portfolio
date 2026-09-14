@@ -96,6 +96,12 @@ svg {
   padding-inline: var(--shell-pad);
 }
 
+// The career log breaks out of .wrap to full viewport width. Clip rather than
+// hidden, so this never becomes a scroll container.
+main {
+  overflow-x: clip;
+}
+
 .skip-link {
   position: absolute;
   left: -9999px;

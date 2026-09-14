@@ -1,0 +1,21 @@
+<div class="log">
+  <p class="cmd" aria-hidden="true"><span class="prompt">$</span> git log --graph --all</p>
+
+  <canvas #canvas [style.height.px]="graphHeight" aria-hidden="true"></canvas>
+
+  @let c = caption();
+  <p class="cap" [style.--lane]="c.color">
+    <span class="cap-dot" aria-hidden="true"></span>
+    <span class="cap-sha">{{ c.sha }}</span>
+    <span class="cap-msg">{{ c.msg }}</span>
+    <span class="cap-ref">{{ c.ref }}</span>
+    <span class="cap-skill">{{ c.skill }}</span>
+  </p>
+
+  <!-- The braid carries real content, so it cannot just be silent to a reader. -->
+  <ol class="sr-only">
+    @for (commit of log; track commit.msg) {
+      <li>{{ commit.msg }}. {{ commit.skill }}.</li>
+    }
+  </ol>
+</div>

@@ -1,5 +1,7 @@
 import { Component, afterNextRender, signal } from '@angular/core';
 
+import { CareerLog } from './career-log/career-log';
+
 interface Project {
   id: string;
   title: string;
@@ -36,7 +38,7 @@ interface SwitchVoice {
 }
 
 @Component({
-  imports: [],
+  imports: [CareerLog],
   selector: 'app-root',
   styleUrl: './app.scss',
   templateUrl: './app.html',
