@@ -1,4 +1,4 @@
-import { Component, afterNextRender, signal } from '@angular/core';
+import { Component, DestroyRef, afterNextRender, inject, signal } from '@angular/core';
 
 import { CareerLog } from './career-log/career-log';
 
@@ -20,6 +20,15 @@ interface Role {
 interface StackGroup {
   label: string;
   value: string;
+}
+
+interface Skill {
+  name: string;
+  slug: string;
+  /** Official brand hex, no leading '#'. */
+  hex: string;
+  /** Override for dark theme, for brand colors too close to the dark background to read. */
+  hexDark?: string;
 }
 
 interface Contact {
@@ -47,7 +56,9 @@ export class App {
   protected readonly title = signal('portfolio');
 
   readonly theme = signal<'light' | 'dark'>('light');
+  readonly showTopButton = signal(false);
 
+  private readonly destroyRef = inject(DestroyRef);
   private audioCtx?: AudioContext;
 
   readonly projects = signal<Project[]>([
@@ -111,6 +122,25 @@ export class App {
     },
   ]);
 
+  readonly skills = signal<Skill[]>([
+    { name: 'JavaScript', slug: 'javascript', hex: 'F7DF1E' },
+    { name: 'TypeScript', slug: 'typescript', hex: '3178C6' },
+    { name: 'HTML5', slug: 'html5', hex: 'E34F26' },
+    { name: 'CSS3', slug: 'css', hex: '663399' },
+    { name: 'Angular', slug: 'angular', hex: '0F0F11', hexDark: 'FFFFFF' },
+    { name: 'Node.js', slug: 'nodedotjs', hex: '5FA04E' },
+    { name: 'Express', slug: 'express', hex: '0A0A0A', hexDark: 'FFFFFF' },
+    { name: 'npm', slug: 'npm', hex: 'CB3837' },
+    { name: 'Sass', slug: 'sass', hex: 'CC6699' },
+    { name: 'PostgreSQL', slug: 'postgresql', hex: '4169E1' },
+    { name: 'MySQL', slug: 'mysql', hex: '4479A1' },
+    { name: 'Docker', slug: 'docker', hex: '2496ED' },
+    { name: 'Vite', slug: 'vite', hex: '9135FF' },
+    { name: 'Render', slug: 'render', hex: '000000', hexDark: 'FFFFFF' },
+    { name: 'GitHub Actions', slug: 'githubactions', hex: '2088FF' },
+    { name: 'Claude', slug: 'claude', hex: 'D97757' },
+  ]);
+
   readonly stack = signal<StackGroup[]>([
     { label: 'Languages', value: 'JavaScript, TypeScript, SQL' },
     { label: 'Frontend', value: 'Angular, Vue 3, SCSS' },
@@ -149,7 +179,22 @@ export class App {
       const initial = stored === 'dark' || stored === 'light' ? stored : 'light';
       this.theme.set(initial);
       document.documentElement.setAttribute('data-theme', initial);
+
+      const onScroll = () => this.showTopButton.set(window.scrollY > 400);
+      onScroll();
+      window.addEventListener('scroll', onScroll, { passive: true });
+      this.destroyRef.onDestroy(() => window.removeEventListener('scroll', onScroll));
     });
+  }
+
+  skillColor(skill: Skill): string {
+    const hex = this.theme() === 'dark' && skill.hexDark ? skill.hexDark : skill.hex;
+    return `#${hex}`;
+  }
+
+  scrollToTop(): void {
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    window.scrollTo({ top: 0, behavior: reduceMotion ? 'auto' : 'smooth' });
   }
 
   toggleTheme(): void {
