@@ -102,9 +102,6 @@ export class CareerLog {
       };
       scheme.addEventListener('change', onScheme);
 
-      // Not a ResizeObserver: measure() writes the host's width, which
-      // reflows the very element any observer here would be watching, and
-      // that loops. The breakout depends only on the viewport anyway.
       let pending = 0;
       const onResize = () => {
         cancelAnimationFrame(pending);
@@ -151,25 +148,13 @@ export class CareerLog {
   private measure(): void {
     const canvas = this.canvasRef().nativeElement;
     const host = this.element.nativeElement;
-    const parent = host.parentElement;
-    if (!parent) return;
 
-    // The CSS fallback breaks out with 100vw, which counts the scrollbar and
-    // lands half its width off centre. Measured values do not: clientWidth
-    // excludes the scrollbar, and the parent's content edge is exact.
-    const viewport = document.documentElement.clientWidth;
-    if (viewport < 1 || viewport === this.width) return;
-    const box = parent.getBoundingClientRect();
-    const contentLeft = box.left + (parseFloat(getComputedStyle(parent).paddingLeft) || 0);
-
-    host.style.marginInline = '0';
-    host.style.marginLeft = `${-contentLeft}px`;
-    host.style.width = `${viewport}px`;
-    host.style.setProperty('--bleed-pad', `${contentLeft}px`);
+    const hostWidth = host.clientWidth;
+    if (hostWidth < 1 || hostWidth === this.width) return;
 
     // A fractional CSS width makes the browser resample the backing store into
     // the box, which softens every line uniformly.
-    const width = Math.floor(viewport);
+    const width = Math.floor(hostWidth);
     this.width = width;
     // No lower clamp: a phone gets a denser braid rather than a clipped one.
     const gap = Math.min(34, (width - 28) / (LOG.length - 1));

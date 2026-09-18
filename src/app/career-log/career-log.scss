@@ -1,20 +1,6 @@
 :host {
   display: block;
   margin-block: 44px 0;
-
-  // Breaks out of .wrap so the history runs past both content edges, and
-  // `main` clips what a scrollbar would otherwise push into overflow. These
-  // are the pre-hydration values; the component replaces them with measured
-  // ones, since 100vw counts a scrollbar the layout does not have.
-  width: 100vw;
-  margin-inline: calc(50% - 50vw);
-  --bleed-pad: max(var(--shell-pad), calc(50vw - var(--shell-max) / 2 + var(--shell-pad)));
-}
-
-// The braid runs edge to edge; its two text lines stay on the shell's grid.
-.cmd,
-.cap {
-  padding-inline: var(--bleed-pad);
 }
 
 .cmd {

@@ -64,7 +64,7 @@ export class App {
   readonly projects = signal<Project[]>([
     {
       id: '01',
-      title: 'Keel',
+      title: 'Keel - System Design Tool',
       summary:
         'A multiplayer canvas for system architecture. Yjs CRDT over WebSocket gives live cursors, presence, offline-first editing through IndexedDB, and per-field conflict resolution so concurrent edits merge cleanly. A shared client and server validation engine runs 13 rules for circular dependencies, retry storms, single points of failure and missing dead-letter queues, with an optional AI review layer whose findings have to cite a real node or edge id.',
       links: [
@@ -78,7 +78,7 @@ export class App {
       title: 'Healthcare workflow automation',
       summary:
         'Workflow automation for healthcare data built on the Kestra orchestration engine, using HL7 for sharing clinical and administrative data between systems. I built the screens to configure and monitor runs, with execution history and error visibility for faster debugging, plus small utilities for data transformation and API bridging. Services are containerised with Docker so local and deployed environments match.',
-      links: [],
+      links: [{ label: 'fethrhealth.com', href: 'https://fethrhealth.com/' }],
       tags: ['Vue 3', 'Kestra', 'Docker'],
     },
     {
@@ -86,7 +86,7 @@ export class App {
       title: 'Boxxport marketplace',
       summary:
         'Container trading marketplace: buyer and seller dashboards, report generation, and location-based container search backed by REST APIs. Static site generation with asset optimisation, preloading and lazy loading moved the performance score from 60 to 90 and organic traffic up 20%. Container Radar and global search improved match success by 30% and cut bounce rate by 18%.',
-      links: [],
+      links: [{ label: 'boxxport.com', href: 'https://boxxport.com/' }],
       tags: ['Angular', 'SSG', 'Performance'],
     },
   ]);
@@ -94,24 +94,24 @@ export class App {
   readonly roles = signal<Role[]>([
     {
       when: 'Dec 2025 – Present',
-      title: 'Frontend Engineer',
+      title: 'Full-stack Developer',
       org: 'Fethr Health, Inc. · US, remote',
       summary:
         'Cerner FHIR OAuth2 integration using SMART Backend Services, with tenant auto-discovery, cached token minting and wildcard scope management. A no-code FHIR mapping UI over a 39-resource R4 schema seeded into PostgreSQL, resolving JSON output paths at runtime. A monitoring dashboard for connector health, message history and failures. Also the canvas-based drag-and-drop editor for a no-code workflow platform on top of Kestra.',
     },
     {
       when: 'Mar 2024 – Dec 2025',
-      title: 'Software Engineer',
-      org: 'Brain Crowd · Assam University, Silchar',
+      title: 'Software Developer 2',
+      org: 'Brain Crowd · AUS',
       summary:
         'Led the migration of Admission, Student Life Cycle, Academics and Programs workflows onto the Samarth eGov platform, cutting cross-division resolution time from days to hours. Modular architecture with lazy loading and state management in RxJS and NgRx, plus reusable accessible UI components. Wrote HLD and LLD diagrams and broke the work into sprint-sized epics and stories.',
     },
     {
       when: 'Aug 2022 – Mar 2024',
       title: 'Software Developer',
-      org: 'Brain Crowd · Bengaluru',
+      org: 'Brain Crowd · Boxxport',
       summary:
-        'Full stack feature work on the Boxxport marketplace with cross-functional teams: dashboards, reporting, and the location-based search stack. Owned the performance and SEO pass that took the site from 60 to 90, and supported production bug fixes and rollouts alongside QA and product.',
+        'Front-end feature work on the Boxxport marketplace with cross-functional teams: dashboards, reporting, and the location-based search stack. Owned the performance and SEO pass that took the site from 60 to 90, and supported production bug fixes and rollouts alongside QA and product.',
     },
     {
       when: 'Oct 2021 – Aug 2022',
@@ -138,16 +138,16 @@ export class App {
     { name: 'Vite', slug: 'vite', hex: '9135FF' },
     { name: 'Render', slug: 'render', hex: '000000', hexDark: 'FFFFFF' },
     { name: 'GitHub Actions', slug: 'githubactions', hex: '2088FF' },
-    { name: 'Claude', slug: 'claude', hex: 'D97757' },
+    { name: 'Claude Code', slug: 'claude', hex: 'D97757' },
   ]);
 
   readonly stack = signal<StackGroup[]>([
     { label: 'Languages', value: 'JavaScript, TypeScript, SQL' },
-    { label: 'Frontend', value: 'Angular, Vue 3, SCSS' },
-    { label: 'Backend', value: 'Node.js, REST APIs' },
+    { label: 'Frontend', value: 'Angular, Vue 3, SCSS, HTML5, CSS3' },
+    { label: 'Backend', value: 'Node.js, Express.js, REST APIs' },
     { label: 'Data', value: 'PostgreSQL, MySQL' },
-    { label: 'Platform', value: 'Docker, AWS, Vercel, Vite' },
-    { label: 'Domain', value: 'HL7, FHIR, Cerner EHR' },
+    { label: 'Platform', value: 'Docker, AWS, GitHub Actions, Github Pages Render, Vite' },
+    // { label: 'Domain', value: 'HL7, FHIR, Cerner EHR' },
   ]);
 
   readonly contacts = signal<Contact[]>([
