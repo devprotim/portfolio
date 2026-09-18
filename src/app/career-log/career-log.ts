@@ -45,6 +45,9 @@ export class CareerLog {
     color: '#a371f7',
   });
 
+  /** User-facing play/pause state, driven by the button. */
+  protected readonly paused = signal(false);
+
   private ctx?: CanvasRenderingContext2D;
   private graph?: Graph;
   private width = 0;
@@ -68,6 +71,10 @@ export class CareerLog {
   /** Fill for the hole in a merge ring, so it reads correctly in both themes. */
   private plate = '#f2f4f0';
 
+  private audioCtx?: AudioContext;
+  /** Synthesized once and reused; generating it per click is wasted work. */
+  private reverbBuffer?: AudioBuffer;
+
   constructor() {
     const destroyRef = inject(DestroyRef);
 
@@ -82,6 +89,8 @@ export class CareerLog {
       // Capping at 2 upscales a blurry backing store on 2.5x and 3x displays.
       this.dpr = Math.min(window.devicePixelRatio || 1, 3);
       this.reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      // Reduced-motion users start paused, but the button still lets them opt in.
+      this.paused.set(this.reduced);
 
       this.readTheme();
       this.measure();
@@ -140,6 +149,100 @@ export class CareerLog {
     });
   }
 
+  protected togglePlay(): void {
+    const playing = this.paused();
+    this.paused.set(!playing);
+    this.playToggleSound(playing);
+    this.sync();
+  }
+
+  // Resuming is a quick dry pluck; pausing decays through a synthesized
+  // convolution reverb into a slowed, murky tail — the opposite gesture.
+  private playToggleSound(nowPlaying: boolean): void {
+    if (!('AudioContext' in window)) return;
+
+    if (!this.audioCtx) this.audioCtx = new AudioContext();
+    if (this.audioCtx.state === 'suspended') this.audioCtx.resume();
+
+    const ctx = this.audioCtx;
+    const t = ctx.currentTime;
+
+    if (nowPlaying) {
+      // A tonal reverse riser: two sine layers swelling from silence to a
+      // peak while pitch climbs, cut off cleanly at the top instead of
+      // trailing off — the mirror of the pause tone's decay, without the
+      // noise burst reading as static.
+      const duration = 0.3;
+
+      const osc = ctx.createOscillator();
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(180, t);
+      osc.frequency.exponentialRampToValueAtTime(520, t + duration);
+      const gain = ctx.createGain();
+      gain.gain.setValueAtTime(0.0001, t);
+      gain.gain.exponentialRampToValueAtTime(0.45, t + duration - 0.02);
+      gain.gain.linearRampToValueAtTime(0, t + duration);
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.start(t);
+      osc.stop(t + duration);
+
+      const shimmer = ctx.createOscillator();
+      shimmer.type = 'sine';
+      shimmer.frequency.setValueAtTime(360, t);
+      shimmer.frequency.exponentialRampToValueAtTime(1040, t + duration);
+      const shimmerGain = ctx.createGain();
+      shimmerGain.gain.setValueAtTime(0.0001, t);
+      shimmerGain.gain.exponentialRampToValueAtTime(0.18, t + duration - 0.02);
+      shimmerGain.gain.linearRampToValueAtTime(0, t + duration);
+      shimmer.connect(shimmerGain);
+      shimmerGain.connect(ctx.destination);
+      shimmer.start(t);
+      shimmer.stop(t + duration);
+      return;
+    }
+
+    const osc = ctx.createOscillator();
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(480, t);
+    osc.frequency.exponentialRampToValueAtTime(150, t + 0.22);
+    const dry = ctx.createGain();
+    dry.gain.setValueAtTime(0.2, t);
+    dry.gain.exponentialRampToValueAtTime(0.0001, t + 0.26);
+
+    const convolver = ctx.createConvolver();
+    convolver.buffer = this.reverbImpulse(ctx);
+    const wet = ctx.createGain();
+    wet.gain.value = 0.5;
+
+    osc.connect(dry);
+    dry.connect(ctx.destination);
+    osc.connect(convolver);
+    convolver.connect(wet);
+    wet.connect(ctx.destination);
+
+    osc.start(t);
+    osc.stop(t + 0.28);
+  }
+
+  // Stands in for a room reverb: exponentially decaying noise, since there is
+  // no audio file to convolve against.
+  private reverbImpulse(ctx: AudioContext): AudioBuffer {
+    if (this.reverbBuffer) return this.reverbBuffer;
+
+    const duration = 0.55;
+    const length = Math.floor(ctx.sampleRate * duration);
+    const impulse = ctx.createBuffer(2, length, ctx.sampleRate);
+    for (let channel = 0; channel < 2; channel++) {
+      const data = impulse.getChannelData(channel);
+      for (let i = 0; i < length; i++) {
+        data[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / length, 4);
+      }
+    }
+    this.reverbBuffer = impulse;
+    return impulse;
+  }
+
   private readTheme(): void {
     const styles = getComputedStyle(document.documentElement);
     this.plate = styles.getPropertyValue('--bg').trim() || '#f2f4f0';
@@ -181,7 +284,7 @@ export class CareerLog {
   }
 
   private sync(): void {
-    const shouldRun = this.visible && !document.hidden && !this.reduced;
+    const shouldRun = this.visible && !document.hidden && !this.paused();
     if (shouldRun === this.running) return;
     this.running = shouldRun;
     if (shouldRun) {

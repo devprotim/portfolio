@@ -1,5 +1,24 @@
 <div class="log">
-  <p class="cmd" aria-hidden="true"><span class="prompt">$</span> git log --graph --all</p>
+  <div class="cmd-row">
+    <p class="cmd" aria-hidden="true"><span class="prompt">$</span> git log --graph --all</p>
+    <button
+      type="button"
+      class="log-toggle"
+      (click)="togglePlay()"
+      [attr.aria-label]="paused() ? 'Play graph animation' : 'Pause graph animation'"
+    >
+      @if (paused()) {
+        <svg viewBox="0 0 12 12" width="10" height="10" aria-hidden="true">
+          <path d="M2.5 1.2 L10.2 6 L2.5 10.8 Z" fill="currentColor" />
+        </svg>
+      } @else {
+        <svg viewBox="0 0 12 12" width="10" height="10" aria-hidden="true">
+          <rect x="2" y="1.2" width="2.8" height="9.6" fill="currentColor" />
+          <rect x="7.2" y="1.2" width="2.8" height="9.6" fill="currentColor" />
+        </svg>
+      }
+    </button>
+  </div>
 
   <canvas #canvas [style.height.px]="graphHeight" aria-hidden="true"></canvas>
 
