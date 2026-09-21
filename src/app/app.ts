@@ -125,16 +125,16 @@ export class App {
   readonly skills = signal<Skill[]>([
     { name: 'JavaScript', slug: 'javascript', hex: 'F7DF1E' },
     { name: 'TypeScript', slug: 'typescript', hex: '3178C6' },
-    { name: 'HTML5', slug: 'html5', hex: 'E34F26' },
-    { name: 'CSS3', slug: 'css', hex: '663399' },
     { name: 'Angular', slug: 'angular', hex: '0F0F11', hexDark: 'FFFFFF' },
     { name: 'Node.js', slug: 'nodedotjs', hex: '5FA04E' },
     { name: 'Express', slug: 'express', hex: '0A0A0A', hexDark: 'FFFFFF' },
-    { name: 'npm', slug: 'npm', hex: 'CB3837' },
+    { name: 'HTML5', slug: 'html5', hex: 'E34F26' },
+    { name: 'CSS3', slug: 'css', hex: '663399' },
     { name: 'Sass', slug: 'sass', hex: 'CC6699' },
     { name: 'PostgreSQL', slug: 'postgresql', hex: '4169E1' },
     { name: 'MySQL', slug: 'mysql', hex: '4479A1' },
     { name: 'Docker', slug: 'docker', hex: '2496ED' },
+    { name: 'npm', slug: 'npm', hex: 'CB3837' },
     { name: 'Vite', slug: 'vite', hex: '9135FF' },
     { name: 'Render', slug: 'render', hex: '000000', hexDark: 'FFFFFF' },
     { name: 'GitHub Actions', slug: 'githubactions', hex: '2088FF' },
@@ -143,7 +143,7 @@ export class App {
 
   readonly stack = signal<StackGroup[]>([
     { label: 'Languages', value: 'JavaScript, TypeScript, SQL' },
-    { label: 'Frontend', value: 'Angular, Vue 3, SCSS, HTML5, CSS3' },
+    { label: 'Frontend', value: 'Angular, SCSS, HTML5, CSS3' },
     { label: 'Backend', value: 'Node.js, Express.js, REST APIs' },
     { label: 'Data', value: 'PostgreSQL, MySQL' },
     { label: 'Platform', value: 'Docker, AWS, GitHub Actions, Github Pages Render, Vite' },
